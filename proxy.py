@@ -183,16 +183,17 @@ import signal
 import sys
 import termios
 import tty
-#import yaml
+import yaml
 
 # The following escape codes are xterm codes.
 # See http://rtfm.etla.org/xterm/ctlseq.html for more.
 START_ALTERNATE_MODE = set('\x1b[?{0}h'.format(i) for i in ('1049', '47', '1047'))
 END_ALTERNATE_MODE = set('\x1b[?{0}l'.format(i) for i in ('1049', '47', '1047'))
 ALTERNATE_MODE_FLAGS = tuple(START_ALTERNATE_MODE) + tuple(END_ALTERNATE_MODE)
+MACROS = {}
 
-#with open('config.yaml') as data_file:
-    #macros = yaml.load(data_file)
+with open('config.yaml') as data_file:
+    MACROS = yaml.load(data_file)
 
 def findlast(s, substrs):
     '''
@@ -275,7 +276,6 @@ class Interceptor(object):
         Main select loop. Passes all data to self.master_read() or self.stdin_read().
         '''
         user_data = ""
-        macros = {"list":"ls", "q":"exit\n\n", "find":"f"}
         assert self.master_fd is not None
         master_fd = self.master_fd
         while 1:
@@ -291,7 +291,7 @@ class Interceptor(object):
             if STDIN_FILENO in rfds:
                 next_char = os.read(STDIN_FILENO, 1024)
                 user_data = user_data + next_char
-                user_data = user_data.strip().lower()
+                user_data = user_data.lower()
                 #sys.stdout.write(next_char)
                 #sys.stdout.flush()
                 if next_char == "\\":
@@ -299,8 +299,8 @@ class Interceptor(object):
                 elif next_char == "\r":
                     self.stdin_read(user_data+"\n")
                     user_data = ""
-                if user_data in macros:
-                    self.stdin_read(macros[user_data] + "\n")
+                if user_data in MACROS:
+                    self.stdin_read(MACROS[user_data])
                     user_data = ""
 
     def write_stdout(self, data):
@@ -327,10 +327,10 @@ class Interceptor(object):
         if flag is not None:
             if flag in START_ALTERNATE_MODE:
                 # This code is executed when the child process switches the terminal into alternate mode. The line below assumes that the user has opened vim, and writes a message.
-                self.write_master('IEntering special mode.\x1b')
+                self.write_master('')
             elif flag in END_ALTERNATE_MODE:
                 # This code is executed when the child process switches the terminal back out of alternate mode. The line below assumes that the user has returned to the command prompt.
-                self.write_master('echo "Leaving special mode."\r')
+                self.write_master('')
         self.write_stdout(data)
 
     def stdin_read(self, data):
