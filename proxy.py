@@ -183,7 +183,7 @@ import signal
 import sys
 import termios
 import tty
-import yaml
+import json
 
 # The following escape codes are xterm codes.
 # See http://rtfm.etla.org/xterm/ctlseq.html for more.
@@ -192,8 +192,9 @@ END_ALTERNATE_MODE = set('\x1b[?{0}l'.format(i) for i in ('1049', '47', '1047'))
 ALTERNATE_MODE_FLAGS = tuple(START_ALTERNATE_MODE) + tuple(END_ALTERNATE_MODE)
 MACROS = {}
 
-with open('config.yaml') as data_file:
-    MACROS = yaml.load(data_file)
+with open('config.json') as data_file:
+    print data_file
+    MACROS = json.load(data_file)
 
 def findlast(s, substrs):
     '''
@@ -291,7 +292,7 @@ class Interceptor(object):
             if STDIN_FILENO in rfds:
                 next_char = os.read(STDIN_FILENO, 1024)
                 user_data = user_data + next_char
-                user_data = user_data.lower()
+                user_data = user_data.lower().strip()
                 #sys.stdout.write(next_char)
                 #sys.stdout.flush()
                 if next_char == "\\":

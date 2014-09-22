@@ -1,5 +1,6 @@
 # universal
-enter: "\n"
+peanut: "\n"
+
 alpha:    "a"
 bravo:    "b"
 charlie:  "c"
@@ -21,7 +22,7 @@ romeo:    "r"
 sierra:   "s"
 tango:    "t"
 uniform:  "u"
-victor:   "v"
+visual:   "v"
 whiskey:  "w"
 xray:     "x"
 yankee:   "y"
@@ -35,6 +36,7 @@ parent: ".."
 current: "."
 
 # vim
+editor: "vim\n"
 find: "f"
 search: "/"
 quit: ":q!"
