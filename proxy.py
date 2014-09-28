@@ -17,7 +17,6 @@ ALTERNATE_MODE_FLAGS = tuple(START_ALTERNATE_MODE) + tuple(END_ALTERNATE_MODE)
 MACROS = {}
 
 with open('config.json') as data_file:
-    print data_file
     MACROS = json.load(data_file)
 
 def findlast(s, substrs):
@@ -32,6 +31,19 @@ def findlast(s, substrs):
             i = pos
             result = substr
     return result
+
+class InputBuffer(object):
+    def __init__(self):
+        self.text = ""
+
+    def add_char(self, char):
+        self.text = self.text + char
+
+    def normalize(self):
+        self.text = self.text.lower().strip()
+
+    def clear(self):
+        self.text = ""
 
 class Interceptor(object):
     '''
@@ -100,7 +112,6 @@ class Interceptor(object):
         '''
         Main select loop. Passes all data to self.master_read() or self.stdin_read().
         '''
-        user_data = ""
         assert self.master_fd is not None
         master_fd = self.master_fd
         while 1:
@@ -115,18 +126,20 @@ class Interceptor(object):
                 self.master_read(data)
             if STDIN_FILENO in rfds:
                 next_char = os.read(STDIN_FILENO, 1024)
-                user_data = user_data + next_char
-                user_data = user_data.lower().strip()
+                input_buffer.add_char(next_char)
+                input_buffer.normalize()
                 #sys.stdout.write(next_char)
                 #sys.stdout.flush()
                 if next_char == "\\":
-                    user_data = ""
+                    input_buffer.clear()
                 elif next_char == "\r":
-                    self.stdin_read(user_data+"\n")
-                    user_data = ""
-                if user_data in MACROS:
-                    self.stdin_read(MACROS[user_data])
-                    user_data = ""
+                    self.stdin_read(input_buffer.text+"\n")
+                    input_buffer.clear()
+                if "scratch" in input_buffer.text:
+                    input_buffer.clear()
+                if input_buffer.text in MACROS:
+                    self.stdin_read(MACROS[input_buffer.text])
+                    input_buffer.clear()
 
     def write_stdout(self, data):
         '''
@@ -165,6 +178,7 @@ class Interceptor(object):
         self.write_master(data)
 
 if __name__ == '__main__':
+    input_buffer = InputBuffer()
     i = Interceptor()
     i.write_stdout('\npty started.\n')
     i.spawn(sys.argv[1:])
