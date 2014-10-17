@@ -1,4 +1,5 @@
 execfile("./ptylib.py") # TODO use proper import
+execfile("./config.py") # TODO use proper import
 import array
 import fcntl
 import os
@@ -14,10 +15,6 @@ import json
 START_ALTERNATE_MODE = set('\x1b[?{0}h'.format(i) for i in ('1049', '47', '1047'))
 END_ALTERNATE_MODE = set('\x1b[?{0}l'.format(i) for i in ('1049', '47', '1047'))
 ALTERNATE_MODE_FLAGS = tuple(START_ALTERNATE_MODE) + tuple(END_ALTERNATE_MODE)
-MACROS = {}
-
-with open('config.json') as data_file:
-    MACROS = json.load(data_file)
 
 def findlast(s, substrs):
     '''
@@ -114,6 +111,8 @@ class Interceptor(object):
         '''
         assert self.master_fd is not None
         master_fd = self.master_fd
+        input_mode = "MACRO"
+        current_mac_fun = ""
         while 1:
             try:
                 rfds, wfds, xfds = select.select([master_fd, STDIN_FILENO], [], [])
@@ -130,16 +129,35 @@ class Interceptor(object):
                 input_buffer.normalize()
                 #sys.stdout.write(next_char)
                 #sys.stdout.flush()
-                if next_char == "\\":
+                if input_mode is "MACRO":
+                    if next_char == "\\":
+                        input_buffer.clear()
+                    elif next_char == "\r":
+                        self.stdin_read(input_buffer.text+"\n")
+                        input_buffer.clear()
+                    if "configuration" in input_buffer.text:
+                        execfile("./config.py") # TODO use proper import
+                        input_buffer.clear()
+                    if "scratch" in input_buffer.text:
+                        input_buffer.clear()
+                    if "snore" in input_buffer.text:
+                        input_mode = "SNORE"
+                    if input_buffer.text in MACROS:
+                        self.stdin_read(MACROS[input_buffer.text])
+                        input_buffer.clear()
+                    if input_buffer.text in MACRO_FUNCTIONS:
+                        input_mode = "MACRO_FUNCTION"
+                        current_mac_fun = input_buffer.text
+                        input_buffer.clear()
+                elif input_mode is "MACRO_FUNCTION":
+                    self.stdin_read(MACRO_FUNCTIONS[current_mac_fun](input_buffer.text))
+                    input_mode = "MACRO"
                     input_buffer.clear()
-                elif next_char == "\r":
-                    self.stdin_read(input_buffer.text+"\n")
-                    input_buffer.clear()
-                if "scratch" in input_buffer.text:
-                    input_buffer.clear()
-                if input_buffer.text in MACROS:
-                    self.stdin_read(MACROS[input_buffer.text])
-                    input_buffer.clear()
+                elif input_mode is "SNORE":
+                    if next_char == "\\":
+                        input_mode = "MACRO"
+                    else:
+                        self.stdin_read(next_char)
 
     def write_stdout(self, data):
         '''
@@ -178,6 +196,7 @@ class Interceptor(object):
         self.write_master(data)
 
 if __name__ == '__main__':
+    input_mode = "MACRO"
     input_buffer = InputBuffer()
     i = Interceptor()
     i.write_stdout('\npty started.\n')
