@@ -126,28 +126,47 @@ class Interceptor(object):
             if STDIN_FILENO in rfds:
                 next_char = os.read(STDIN_FILENO, 1024)
                 input_buffer.add_char(next_char)
-                input_buffer.normalize()
+                unformatted_text = input_buffer.text.lower().strip() # just uncapitalizes and removes whitespace
                 #sys.stdout.write(next_char)
                 #sys.stdout.flush()
                 if input_mode is "MACRO":
                     if next_char == "\\":
                         input_buffer.clear()
                     elif next_char == "\r":
-                        self.stdin_read(input_buffer.text+"\n")
+                        self.stdin_read(unformatted_text+"\n")
                         input_buffer.clear()
-                    if "configuration" in input_buffer.text:
+                    elif "configuration" in unformatted_text:
                         execfile("./config.py") # TODO use proper import
                         input_buffer.clear()
-                    if "scratch" in input_buffer.text:
+                    elif "scratch" in unformatted_text:
                         input_buffer.clear()
-                    if "snore" in input_buffer.text:
+                    elif "snore" in unformatted_text:
                         input_mode = "SNORE"
-                    if input_buffer.text in MACROS:
-                        self.stdin_read(MACROS[input_buffer.text])
-                        input_buffer.clear()
-                    if input_buffer.text in MACRO_FUNCTIONS:
+                    elif unformatted_text in MACRO_FUNCTIONS:
                         input_mode = "MACRO_FUNCTION"
-                        current_mac_fun = input_buffer.text
+                        current_mac_fun = unformatted_text
+                        input_buffer.clear()
+                    else:
+                        # first replace any words which map to something else
+                        # then we'll handle plain letters
+                        # we'll concatenate everything into processed_command to send to the subshell
+                        processed_command = ""
+                        commands = input_buffer.text.split(" ")
+                        for command in commands:
+                            if command.lower() in WORD_MACROS:
+                                # TODO possible bug here ie. EGG -> e, but EGG is probably spelt out
+                                #      manually my the narrator
+                                processed_command = processed_command + WORD_MACROS[command.lower()]
+                            elif command == command.upper():
+                                # make sure all letters are uppercase! mac's dictation seems to do this
+                                # by default so I'm using it as an additional safegaurd
+                                processed_command = processed_command + command.lower()
+                            else:
+                                # throw a dumb error for now. this will send a "?" keystroke
+                                # TODO change this to a real error once I have a status line
+                                processed_command = "?"
+                                break
+                        self.stdin_read(processed_command)
                         input_buffer.clear()
                 elif input_mode is "MACRO_FUNCTION":
                     self.stdin_read(MACRO_FUNCTIONS[current_mac_fun](input_buffer.text))
