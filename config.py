@@ -52,6 +52,34 @@ WORD_MACROS = {
   "peanut": "\\",
   "\\": "\\",
   
+  # Names as letters
+  "albert" : "a",
+  "bob" : "b",
+  "carol" : "c",
+  "daniel" : "d",
+  "edward" : "e",
+  "frederick" : "f",
+  "gary" : "g",
+  "howard" : "h",
+  "ireland" : "i",
+  "jeffrey" : "j",
+  "christine" : "k",
+  "larry" : "l",
+  "mark" : "m",
+  "nancy" : "n",
+  "oscar" : "o",
+  "patrick" : "p",
+  "quick" : "q",
+  "robert" : "r",
+  "sarah" : "s",
+  "thomas" : "t",
+  "ultimate" : "u",
+  "valerie" : "v",
+  "william" : "w",
+  "xavier" : "x",
+  "yolanda" : "y",
+  "zebra" : "z",
+  
   # alphabet corrections
   "hey": "a",
   "be":    "b",
@@ -74,7 +102,6 @@ WORD_MACROS = {
   "the":   "v",
   "visual":   "v",
   "why":   "y",
-  "zebra": "z",
 
   # numbers
   "zero": "0",
@@ -89,8 +116,8 @@ WORD_MACROS = {
   "nine": "9",
 
   # useful shortcuts
-  "edit": "vim "
-  "internet": "w3m google.com\njjjjjj\t\n"
+  "edit": "vim ",
+  "internet": "w3m google.com\njjjjjj\t\n",
   "emacs": "emacs "
 }
 
