@@ -8,7 +8,6 @@ import signal
 import sys
 import termios
 import tty
-import json
 
 # The following escape codes are xterm codes.
 # See http://rtfm.etla.org/xterm/ctlseq.html for more.
@@ -162,9 +161,9 @@ class Interceptor(object):
                                 # by default so I'm using it as an additional safegaurd
                                 processed_command = processed_command + command.lower()
                             else:
-                                # throw a dumb error for now. this will send a "?" keystroke
-                                # TODO change this to a real error once I have a status line
-                                processed_command = "?"
+                                # throw a dumb error for now.
+                                # TODO change this to some useful error once I have a status line
+                                processed_command = processed_command
                                 break
                         self.stdin_read(processed_command)
                         input_buffer.clear()
