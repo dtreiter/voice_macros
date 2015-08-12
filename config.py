@@ -9,6 +9,7 @@ WORD_MACROS = {
   "parentheses": "(",
   "smile": ")",
   "brace": "[",
+  "bruce": "[",
   "square": "]",
   "currently": "{",
   "curly": "{",
@@ -30,14 +31,22 @@ WORD_MACROS = {
   "&": "&",
   "ampersand": "&",
   "star": "*",
+  "flower": "*",
   "question": "?",
   "space": " ",
   ",": ",",
   ":": ":",
   ";": ";",
+  "period": ".",
+  "case": ".",
+  "base": ".",
+  "ace": ".",
   "quote": "\"",
   "quotes": "\"",
   "\"": "\"",
+  "smack": "\"",
+  "snack": "\"",
+  "mac": "\"",
   "smudge": "'",
   "/": "/",
   "search": "/",
@@ -53,24 +62,39 @@ WORD_MACROS = {
   "insert": "\x12",
   "window": "\x17",
   "extend": "\x18",
-  "okay": "\x1b",
+  "escape": "\x1b",
+  "undo": "\x1f",
   "tab": "\t",
   "turn": "\t",
+  "turned": "\t",
   "enter": "\n",
   "yes": "\r",
+  "yeah": "\r",
 
   # Names as letters
   "albert" : "a",
   "bob" : "b",
+  "bill" : "b",
   "carol" : "c",
+  "carroll" : "c",
   "caroll" : "c",
+  "cici": "cc",
   "daniel" : "d",
+  "dede": "dd",
+  "didi": "dd",
   "edward" : "e",
   "frederick" : "f",
   "gary" : "g",
   "garry" : "g",
+  "gerry" : "g",
+  "gigi": "gg",
+  "gege": "gg",
+  "gargantuan": "G",
   "howard" : "h",
-  "ireland" : "i",
+  "high": "i",
+  "hi": "i",
+  "eye": "i",
+  "ireland" : "I",
   "jeffrey" : "j",
   "christine" : "k",
   "larry" : "l",
@@ -89,7 +113,12 @@ WORD_MACROS = {
   "javier" : "x",
   "text" : "x",
   "yolanda" : "y",
+  "yankee": "y",
+  "huewai": "yy",
+  "wife": "y",
   "zebra" : "z",
+  "sibra" : "z",
+  "zipper": "z",
 
   # alphabet corrections
   "hey": "a",
@@ -102,8 +131,11 @@ WORD_MACROS = {
   "fine": "f",
   "joe": "j",
   "top": "\x1b[A",
+  "talk": "\x1b[A",
   "down": "\x1b[B",
   "right": "\x1b[C",
+  "wright": "\x1b[C",
+  "write": "\x1b[C",
   "left": "\x1b[D",
   "mark": "m",
   "in": "n",
@@ -114,6 +146,7 @@ WORD_MACROS = {
   "you": "u",
   "the": "v",
   "visual": "V",
+  "visible": "V",
   "why": "y",
 
   # numbers
@@ -129,24 +162,106 @@ WORD_MACROS = {
   "eight": "8",
   "nine": "9",
 
-  # Python mode
-  "compare": " == ",
-  "equals": " = ",
-  "plus": " + ",
-  "minus": " - ",
-  "self": "self",
-  "this": "this",
-  "return": "return",
-  "finish": "\",\n",
-  "hippie": hippie_expand,
-  "function": "f" + hippie_expand,
-  "value": "d\"" + hippie_expand,
-
   # useful shortcuts
   "edit": "vim ",
   "internet": "w3m google.com\njjjjjj\t\n",
-  "emacs": "emacs-24.3 "
+  "emacs": "emacs"
 }
+
+emacs_grammar = {
+  # Emacs
+  "okay": "fd",
+  "switch": " bb",
+  "lip": " ww",
+  "flip": " ww",
+  "helm": " :",
+  "compile": " cC\n",
+  "home": " :"
+}
+
+general_grammar = {
+  "trace": "()\x1b[D",
+  "string": "\"\"\x1b[D",
+  "compare": " == ",
+  "equals": " = ",
+  "plus": " + ",
+  "increment": " += ",
+  "increments": " += ",
+  "clap": ":",
+  "clapp": ":",
+  "minus": " - "
+}
+
+vacs_grammar = {
+  "mode": "mode",
+  "fax": "vacs",
+  "backs": "vacs",
+  "functions": "functions",
+  "grammar": "grammar",
+  "compiler": "compiler",
+  "config": "config",
+  "interpreter": "interpreter",
+  "token": "token",
+  "directory": "directory"
+}
+
+python_grammar = {
+  "python": "python ",
+  "self": "self",
+  "return": "return ",
+  "finish": "\",\n",
+  "from": "from ",
+  "import": "import ",
+  "hippie": hippie_expand,
+  "function": "f" + hippie_expand,
+  "value": "d\"" + hippie_expand,
+  "loop": "frn" + hippie_expand,
+
+  "lexor": "lexer"
+}
+
+c_grammar = {
+  "integer": "int",
+  "character": "char",
+  "condition": "if" + hippie_expand,
+  "function": "fun" + hippie_expand,
+  "arrow": "->",
+  "nothing": "null",
+  "structure": "struct",
+  "void": "void"
+}
+
+shell_grammar = {
+  "slap": "\x01\x1b[A",
+  "slurp": "\x01\x1b[B",
+  "get": "git ",
+  "commit": "commit ",
+  "addition": "add ",
+  "message": "-m ''\x1b[D",
+  "status": "status"
+}
+
+# A mode is a collection of grammars which is added to the global grammar.
+def python_mode():
+  WORD_MACROS.update(general_grammar)
+  WORD_MACROS.update(emacs_grammar)
+  WORD_MACROS.update(python_grammar)
+  WORD_MACROS.update(vacs_grammar)
+
+def c_mode():
+  WORD_MACROS.update(general_grammar)
+  WORD_MACROS.update(emacs_grammar)
+  WORD_MACROS.update(python_grammar)
+  WORD_MACROS.update(c_grammar)
+
+def shell_mode():
+  WORD_MACROS.update(general_grammar)
+  WORD_MACROS.update(emacs_grammar)
+  WORD_MACROS.update(shell_grammar)
+
+python_mode()
+#c_mode()
+shell_mode()
 
 LETTER_MACROS = {
   # alphabet
@@ -190,6 +305,10 @@ def camel(text):
   output = ''.join(letter for letter in text.title() if letter.isalpha())
   return output[0].lower() + output[1:]
 
+def capital_case(text):
+  output = ''.join(letter for letter in text.title() if letter.isalpha())
+  return output
+
 def double_quote(text):
   output = "\"" + text + "\""
   return output
@@ -198,15 +317,25 @@ def single_quote(text):
   output = "'" + text + "'"
   return output
 
+def period_case(text):
+    output = ".".join(text.lower().split(" "))
+    return output
+
+def python_magic(text):
+    return "__" + text.lower() + "__"
+
 MACRO_FUNCTIONS = {
   "lower": (lambda text: text.lower()),
   "blower": (lambda text: text.lower()),
   "upper": (lambda text: text.upper()),
-  "capital": (lambda text: text.title()),
   "trim": (lambda text: text.strip()),
+  "capital": capital_case,
   "camel": camel,
+  "magical": python_magic,
   "hyphenate": hyphen,
   "underline": underscore,
+  "dots": period_case,
+  "underlined": underscore,
   "put this\"": double_quote,
   "put this\'": single_quote,
   "say": (lambda text: text)
