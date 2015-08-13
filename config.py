@@ -15,6 +15,7 @@ WORD_MACROS = {
   "curly": "{",
   "squiggle": "}",
   "bracket": "<",
+  "racket": "<",
   "knows": ">",
   "nose": ">",
   "*": "*",
@@ -57,6 +58,7 @@ WORD_MACROS = {
   "multiplex": "\x01",
   "trash": "\x03",
   "quit": "\x07",
+  "quits": "\x07",
   "backspace": "\x08",
   "complete": "\x0e",
   "insert": "\x12",
@@ -89,7 +91,8 @@ WORD_MACROS = {
   "gerry" : "g",
   "gigi": "gg",
   "gege": "gg",
-  "gargantuan": "G",
+  "gerald": "G",
+  "jerald": "G",
   "howard" : "h",
   "high": "i",
   "hi": "i",
@@ -170,6 +173,12 @@ WORD_MACROS = {
 
 emacs_grammar = {
   # Emacs
+  "shelf": "shell",
+  "cell": "shell",
+  "sell": "shell",
+  "show": "shell",
+  "she'll": "shell",
+  "shall": "shell",
   "okay": "fd",
   "switch": " bb",
   "lip": " ww",
@@ -199,6 +208,8 @@ vacs_grammar = {
   "functions": "functions",
   "grammar": "grammar",
   "compiler": "compiler",
+  "parser": "parser",
+  "general": "general",
   "config": "config",
   "interpreter": "interpreter",
   "token": "token",
@@ -207,6 +218,7 @@ vacs_grammar = {
 
 python_grammar = {
   "python": "python ",
+  "pie": "py",
   "self": "self",
   "return": "return ",
   "finish": "\",\n",
